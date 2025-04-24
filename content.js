@@ -1,7 +1,8 @@
 console.log("content running successfully");
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    if (request.action === "pauseVideo") {                                // video stope feature
+   // video pause feature
+    if (request.action === "pauseVideo") {                               
         const videos = document.querySelectorAll("video");
         if (videos.length>0) {
             videos.forEach((video) => {
@@ -26,7 +27,8 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       } else {
           console.log("No video element found");
       }
-  } else if(request.action==="backwardVideo"){                             // video backward feature 
+  } // video backward feature  
+  else if(request.action==="backwardVideo"){                            
       const videos = document.querySelectorAll("video")
       if(videos.length >0){
         videos.forEach((video)=>{
@@ -41,7 +43,8 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         console.log("No video element found");
         
       }
-    } else  if(request.action==="forwardVideo"){                          // video forward feature
+    } // video forward feature 
+    else  if(request.action==="forwardVideo"){                          
       const videos = document.querySelectorAll("video")
       if(videos.length >0){
         videos.forEach((video)=>{
@@ -56,14 +59,16 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         console.log("No video element found");
         
       }
-    } else if (request.action && request.action.startsWith("freqControl")) {         // Frequency Control
+    }  // Frequency Control
+    else if (request.action && request.action.startsWith("freqControl")) {         
       console.log("controller working properly");
       
       const level = parseInt(request.action.replace("freqControl", ""));
       const freq = level * 1000; 
       bequadFilter.frequency.setValueAtTime(freq, audio.currentTime);
       console.log(`Frequency changed to ${freq} Hz`);
-    } else  if (request.action && request.action.startsWith("speedControl")) {       // Speed Control 
+    }  // Speed Control 
+     else  if (request.action && request.action.startsWith("speedControl")) {      
       console.log("controller working properly");
       
       const level = parseInt(request.action.replace("speedControl", ""), 10);
@@ -74,74 +79,28 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
           video.playbackRate = speed;
   
         })
+      } // sound control
+    } else  if(request.action && request.action.startsWith("soundControl")){                          
+      const videos = document.querySelectorAll('video');
+      const level = parseInt(request.action.replace("soundControl", " "),10);
+      if(videos.length>0){
+        videos.forEach((video)=>{
+          if(level == 10){
+            video.volume = 1.0;
+          }
+          if(level !=10){
+          video.volume = `0.${level}`;
+          }
+        })
       }
     }
 });
 
 
 
-chrome.runtime.onMessage.addListener((request, sender, sendResponse)=>{                        // Sound Control
+
   
-  const videos = document.querySelectorAll('video');
-  if(videos.length>0){
-    videos.forEach((video)=>{
-      switch(request.action){
-        case 'soundControl0':
-          video.volume = 0.0;
-          break;
-        case 'soundControl1':
-          video.volume = 0.1;
-          break;
-          case 'soundControl2':
-            video.volume = 0.2;
-            break;
-            case 'soundControl3':
-              video.volume = 0.3;
-              break;
-              case 'soundControl4':
-              video.volume = 0.4;
-              break;
-              case 'soundControl5':
-                video.volume = 0.5;
-                break;
-                case 'soundControl6':
-                  video.volume = 0.6;
-                  break;
-                  case 'soundControl7':
-                  video.volume = 0.7;
-                  break;
-                  case 'soundControl8':
-                  video.volume = 0.8;
-                  break;
-                  case 'soundControl9':
-                  video.volume = 0.9;
-                  break;
-                  case 'soundControl10':
-                  video.volume = 1.0;
-                  break;
-                  
-                  
-                  
-    }})
-  }
-})
-  
-  
-
-
-// chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-//   if (request.action && request.action.startsWith("freqControl")) {
-//     console.log("controller working properly");
-    
-//     const level = parseInt(request.action.replace("freqControl", ""));
-//     const freq = level * 1000; 
-//     bequadFilter.frequency.setValueAtTime(freq, audio.currentTime);
-//     console.log(`Frequency changed to ${freq} Hz`);
-//   }
-// });
-
-
- const audio = new(window.AudioContext);
+   const audio = new(window.AudioContext);
  const bequadFilter = audio.createBiquadFilter();
  bequadFilter.type = 'bandpass';
  bequadFilter.frequency.value = 1000;
